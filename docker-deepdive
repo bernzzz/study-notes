@@ -172,7 +172,7 @@ vim Dockerfile --
 
 FROM centos:latest
 
-MAINTAINER bernard <binbern@gmail.com>
+MAINTAINER bernard <*******@gmail.com>
 
 RUN yum update -y
 
@@ -210,10 +210,10 @@ docker run -d bernarad/centossshd:v2 /bin/bash -c "while true; do echo hello;sle
 
 
 
-
-
- Exposing Our Container With Port Redirects
+Exposing Our Container With Port Redirects
 
 #################################################
+
+
 
 
