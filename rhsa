@@ -1,0 +1,1023 @@
+Install CentOS7 Linux Distribution
+########################################################
+
+
+# correct syntax 
+use man 
+ls -list
+cal -calendar
+mv - to move files
+date -gives the date
+
+Use input output redirection
+##########################################
+cat man.txt > /tmp/test.txt --redirection
+cat man.txt >> /tmp/test.txt --redirection + append 
+dshdsadds 2> test.txt --redirect error to the file .capture errors
+dshdsadds 2>> test.txt --redirect error to the file + append 
+/dev/null --kernel location for empty inforamtion.
+dshdsadds 2> /dev/null -- redirects to kernel empty location.
+dshdsadds &> test.txt --redirect stderr and stdout.
+wssdssda 2>&1 | grep "command"  ---redirects standard error to standard out. and pipe can feed it for the next command  .
+head --list first 10 lines
+tail --last 10 messages
+
+Use grep and regular expression to analyze text
+##############################################################
+grep '^#' /etc/ssh/sshd_config -- list all the lines staritng wiht # in the sshd_config file.
+grep -i 'rsaauth' /etc/ssh/ssh_config --- -i case insensitive , return everything that matches the pattern rsaauth from the file.
+grep -v --inverse do not match the pattern
+grep -v '^#' /tmp/file.txt -- will list all the lines which are not hashed out.
+grep 'world$' file.txt --- matches the end pattern world.
+regular expression special symbols 
+? - the preceeding item is optional and is matched at most one time 
++ - preceeding item is matched one or more time.
+grep 'systemd' messages | grep 'start' | -- checks for systemd related messages and then again filter based on start.
+
+Access remote system using SSH
+################################
+ssh -i Linux-Default.pem ec2-user@54.229.64.125 -- login to aws box with the pem key
+ssh -i Linux-Default.pem ec2-user@54.229.64.125 ls -latr / --- list the files of the remote system 
+scp -i Linux-Default.pem file1 ec2-user@54.154.190.8:~ - Copy file from a local system to a remote machine home directory
+scp -i Linux-Default.pem ec2-user@54.154.190.8:/home/ec2-user/file2 /home/mobaxterm/Desktop/aws -- copy file from a remote host to the local machine
+permit root login : /etc/ssh/sshd_config change the permitrootlogin varibale to yes.
+sftp -i Linux-Default.pem ec2-user@54.154.190.8 -- use sftp for a secure file transfer.
+use put and get to fetch the files.
+
+Log in and Switch Users in Multiuser Targets
+###############################################
+ systemctl get-default-- returns the target.
+.bashrc is executed when everytime we enter into an interactive shell : eg : sudo su.
+.bashprofile will get executed as part of login shell.
+"su" -- switch and opens an interactive shell
+"su -" -- switch and opens a login shell.
+/etc/profile -- global login configuration file.
+
+Archive, Compress, Unpack and Uncompress Files Using tar, star, gzip and bzip2
+#################################################################################
+tar doesnt do compression relies on gzip or other third party tools to get it.
+tar -cvf myarchive.tar directory1/ file.txt hello1 hello2 test.txt --- creates an archive called myarchive.tar including the files and directories mentioned.
+tar -tf -- to see what is in the tar file.
+gzip myarchive.tar -- compresses the archive myarchive.tar
+tar -cvzf myarchive1.tar.gz directory1/ hello1 hello2 file.txt test.txt --- using archiving and compressing using tar pasing in the z flag. internally this use the gzip for compression.
+tar -xzvf myarchive.tar.gz --- extract from the compressed archive filtering throught the gzip.( extracting will over write the exisitng content of the file from the one available in the archive )
+tar -dvf myarchive.tar.gz -- shows the difference between the archive and the one in the system.
+gzip -l myarchive.tar.gz --- gives the compression ratio.
+
+Create and Edit Text files.
+#############################
+Differnt modes
+Command mode
+l-to navigate side ways
+j -navigate down
+h -left
+k -right
+yy - yank copy a line
+dd -cut the line
+cc -remove the line and puts us in insert mode.
+p - paste the line below the cursor
+P - paste the line above the cursor
+u - undo
+i - switch from command mode to insert mode.
+(line number )Shift + g  -- to go to the required line.
+1 Shift + g -- goes to the top of the page .
+Shift + g -- goes to the botton of the page.
+?word -- will search for the word.
+/word -- will search for the word.
+n - Next search
+N - Previous search.
+%s/line/bar/g --- find all the oocurence of the word "line" and replaces it with "bar"
+
+Create, Delete, Copy and Move Files and Directories.
+#######################################################
+mkdir -p /tmp/new/dir1 --- creates directories recurisvely
+cp -R /tmp/new/dir1 ---copy recursively
+rm -rf --delete force
+mv -move
+
+create soft and hard links
+##############################3
+symlink-link to another file.
+ln -s /tmp/hello world --creates symbolic link called "world" to the file hello.
+Removing the source file will break the symlink.Editing the symlink again will recreate a new file in the location.
+you will not be able to edit a file wich you dont have permission to even if the symlink permission state otherwise.
+hardlink- are a link to a specefic inode location.The permission chard on the source file will effect the hardlink as well.
+
+List, Set and Change Standard UGO/RWX Permissions.
+####################################################
+#symbolic permissions#
+d{directory/file} r-x{owner perm} r-x {group perm} r-x {other perm}.  4 root{owner} root{group} 4096 Nov 10 09:54 boot
+default permissins determined by umask.
+chmod u+rw testfile -- adds read and write permission for the owner.
+chmod g-rw testfile -- removes read and write permission for the group.
+find / -user jeff -type f -exec cat {} \; --- find all files owned by user jeff of type f (file) and execute cat command against it .
+find /home/ -user jeff -type f -exec rm {} \; --find all file from /home directory owned by jeff and delete it.
+chmod ug+rwx testfile -- add read write and execute permission for the owner and group.
+chmod -R g+rw ---does a recursive set of permissions.
+groupadd finance -- creates a group called finance.
+getent group -- get details of all the groups.
+chown :finance finance --- changes the ownership of thegroup to finance.
+usermod -G finance ec2-user : adds ec2-user to the finace group. " -G stands for addign to the secondary group"
+to change the primary group of the user : newgrp finance
+chmod -R ug+X --- users and groups will have listing permission for directories and no execute for scripts
+#octal permissions# 
+7{owner}7{group}7{other} -- read=4 ; write=2 ; execute =1 ; read&write=4+2=6 ; read&execute=5 ;
+logout and log back in for the user/group perission to set.      
+#setuid#
+stickybit -- prevents a user form deleting a file , prevents an unautherised user from delting and renaming a file directory unless he is the owner.
+chmod +t filename will set the sticky bit as the root.
+
+List, Set and Change Standard UGO/RWX Permissions: umask
+###############################################################
+umask --user mask
+sets the default permission on files and directories.
+umask will never give execute permissions on a file.
+0022 - owner (nothing masked -rw) group (write masked ) other (write masked).
+bashrc -- is run when every time an interactive shell is opened.
+bash_profile --- is run when everytime an login shell is opened.
+system users between 1 nad 200 are for redhat processes.
+root user has a userid 0
+for setting persistent umask edit bashrc and bash_profile.
+
+Locate, Read and Use System Documentation with man, info and /usr/share/doc
+##############################################################################
+man 5 passwd --- will gives the info about the files and configuration files directory assocaited with the passws executable.
+apropos passwd -- to view all the man page titile assocaited with the executable.
+info --- /usr/share/info
+/usr/share/doc --- documentation folder.
+/usr/share/man --man pages
+/usr/share/info --- info pages
+locate -- search everything on the system realting to the given file name from a a chache database. use "updatedb" before the search to makeit more effective.
+which passwd --shows the full absolute path for the specefic program.
+whereis passwd --loacte the binary sorce and manual page files for a command
+rpm -qd "pacakgename" -- quesry information for rpm package . where the package has installed the specefic files.
+
+Finding Files with Locate and Find
+#########################################################################
+find /etc -name motd --- searches for the file named motd in the /etc directory.
+find / -user ec2-user -- searches / for all the files owned by ec2-user
+find / -mtime -3  --- finds all files which is modified in the last 3 days with in the root directory.
+find / -user martin -name 'file*' -exec rm -f {} \; -- find all files owned by user martin and which starts with file and deletes them.
+stat - display file or file system status
+
+Operate Running Systems : Boot, Reboot and Shutdown a System
+#######################################
+systemd is the initialization manager in redhat7 . it handles the initiation of services.
+reboot -- restarts the machine.
+shutdown -r +5 System going down for a reboot. --send message to wall and restart the machine in 5 minutes
+shutdown -P -- poweroff
+shutdown -c --cancels the shutdown.
+shutdown -r now -- reboots immedietly.
+shutdown -P now -- Poweroff immedietly.
+
+runlevel ways : init 0 --shutdown
+		init 6 --reboot.
+systemd has repricated the use of runlevels and insted we have targets.
+/usr/lib/systemd --- path were available targets are shown.
+
+Boot Systems into Different Targets Manually --- practice at VM.
+##########################################################
+/usr/lib/systemd --- path were available targets are shown.
+systemd -- parallel process can be booted up simultaneously.
+systemctl -t help --- view different unit configuration files available in the system.
+systemctl list-dependencies basic.target --- shows the dependencies associated with the target.
+systemctl list-units -t target -- list known units under the unit type target.
+systemctl-getdefault -- shows my default target.
+systemctl --failed --type=service --shows failed service.
+systemctl --type=service --all --list all service unit configuration files regardless of them active or not.
+
+multi-user.target -- multiple users can be logged in . generally at a command prompt
+graphical.target -- gui basesd
+emergency.tagert -- boot up into root command prompt. mount the filesystem as read only.
+rescue target -- single user environment with minium requirment loaded to troubleshoot.
+
+systemctl isolate "target-name" --switch between targets.
+
+systemctl set-default multi-user.target --sets the default target.
+/usr/lib/systemd/system -- contains sytems unit config files which ship with the system.
+/etc/systemd/system -- addition unit config files, softwares which got installed later.
+ Interuppting the boot process and changing the default target
+a. Get to the grub menu 
+b. press e for edit
+c Find the line starting with Linux16 and append the following at the end of the line systemd.unit=multi-user.target
+d Ctrl X to take the configuration
+
+Interrupt the Boot Process to Gain Access to a System. --- practice at VM
+###########################################################################
+
+a. Get to the grub menu 
+b. press e for edit
+c. Find the line starting with Linux16 and append "rd.break" at the end of the line.
+d. Ctrl X to take the configuration 
+e. enters into initramfs debugshell.
+f. mount sysroot directory as read/write (mount -oremount,rw /sysroot)
+g. chroot to create a root environment based of sysroot directory chroot /sysroot
+h. passwd root --- to change the root passsword.
+i. touch / .autorelabel -- to ensure selinux relable all the files 
+j .exit exit 
+
+Identify CPU/Memory Intensive Processes, Adjust Process Priority and Kill Processes - Part 1
+#############################################################################################
+
+pgrep --- combines ps and grep 
+pgrep -a audit ... gives the process name/path and pid
+pgrep -u prab -l -- find and list all the process running under user prab.
+pgrep -v -u root -l -- all the process not owned by the root user.
+pkill httpd --kills all the process named httpd.
+pkill with no arguments sents kill signal 15(SIGTERM).
+pkill -t pts/1  --closes all the users program launched from the users terminal.
+pkill -u prab sftp-server -- kills the sftp process by the user prab
+pkill -u prab -- kills all the process for the user prab.
+
+
+kill signals
+SIGHUP(1) means hangup , used to configure or reload termination of the ccontrolling process of a terminal.
+SIGHINT(2) -- keyboard interupt. same as ctrl c.
+SIGKILL(9) -- kill with no mercy
+SIGTERM(15) --- terminate cleanly.
+SIGCONT(18) --- start from the stopped state( the process).
+SIGSTOP(19) --- stop the process
+
+w  --- shows the current uptime , number of users logged in and the load average of the system.
+
+
+Identify CPU/Memory Intensive Processes, Adjust Process Priority and Kill Processes - Part 2
+###############################################################################################
+(while true; do echo -n "HelloWorld" >> output.txt ; sleep 1 ;done; ) & --- infinte loop scritp with sleep
+
+kill -19 3976 --- stops the process with the PID
+kill -18 3976 --- starts the process with the given PID
+kill 3976 --terminates the process --SIGTERM
+kill -15 %1 -- terminates based on the job number.
+
+pkill -19 test.sh -- stops the process with the process name
+pkill -18 test.sh -- starts the proces with the process name.
+pkill test.sh --- terminates the process --SIGTERM
+
+preferd grep using ps aux . find the process . if its a kill by process id . go for the kill command if its by the process name or grouping go for the pkill.
+
+ps axo pid,command,nice --- dispalys pid command and the nice level.
+
+
+Identify CPU/Memory Intensive Processes, Adjust Process Priority and Kill Processes - Part 3
+################################################################################################
+niceness --- allows us to define a priority for the process.
+-20 -- most favourable
++19 -- least favourable.
+time --time taken to execute a command
+ps axo pid,comm,nice | grep httpd --- find the nice number for the process
+
+how to set the nice priority 
+a. stop the process and then start using nice command. (nice -n 10 httpd)
+b. renice to set the nice priority with out stopping the process.
+renice -n 19 5041 ---sets the priority of 19 for the process ID 5041.
+renice -n 19 $(pgrep httpd) -- sets the priority of 19 for all the httpd process.
+time nice -n 19 tar -cvf check.tar test.file --verify the time taken to run the tar command withe nice level set to highest.
+
+Identify CPU/Memory Intensive Processes, Adjust Process Priority and Kill Processes - Part 4
+######################################################################################################
+
+w-- shows users online , load average ,uptime
+cat /proc/cpuinfo | grep -i "model name" | wc -l --find the number of cores available.
+
+% of cpu power being used. -- the load average value / number of cpu cores 
+
+top command can be used to kill and renice the process .. press "k" to kill or "r" to renice while in the program.
+top shift m -- will sort based on memory
+top shift p -- will sort based on cpu.
+
+top -n 2 --- updates twice and end the program .
+top -d 2 sets the number of seconds before each update .
+
+Locate and Interpret System Log Files and Journals
+########################################################################################################
+traditional log file location -- /var/log/
+httpd -- apache logs
+tail -f messages -- shows appended events in real time for message log. 
+tail -n 20 -- last 20 messages
+head -n 20 -- top 10 messages
+systemd-journald ---- is a system service that collects and stores logging data.
+
+command - journalctl -- logs all events of the system 
+when you reboot contnets of journald are removed unless made persisitent.
+/etc/systemd/journald.conf --- conf file .
+journalctl -n shows -- last 10 messages. 
+journalctl -xn shows a bit more detailed.
+journalctl -f -- shows real time appending of events for all logs
+journalctl -p info/crit/warning/alert -- shows alert based on prioirty.
+systemd-analyze -- find how fast the boot up process was.
+systemd-analyze blame -- shows how long each unit config took during the bootup process.
+
+/var/log/messages  Contains global system messages, including the messages that are logged during system startup. There are several things that are logged in /var/log/messages including mail, cron, daemon, kern, auth, etc.
+/var/log/dmesg  Contains kernel ring buffer information. When the system boots up, it prints number of messages on the screen that displays information about the hardware devices that the kernel detects during boot process. These messages are available in kernel ring buffer and whenever the new message comes the old message gets overwritten. You can also view the content of this file using the dmesg command.
+/var/log/auth.log  Contains system authorization information, including user logins and authentication machinsm that were used.
+/var/log/boot.log  Contains information that are logged when the system boots
+/var/log/daemon.log  Contains information logged by the various background daemons that runs on the system
+/var/log/dpkg.log  Contains information that are logged when a package is installed or removed using dpkg command
+/var/log/kern.log  Contains information logged by the kernel. Helpful for you to troubleshoot a custom-built kernel.
+/var/log/lastlog  Displays the recent login information for all the users. This is not an ascii file. You should use lastlog command to view the content of this file.
+/var/log/maillog /var/log/mail.log  Contains the log information from the mail server that is running on the system. For example, sendmail logs information about all the sent items to this file
+/var/log/user.log  Contains information about all user level logs
+/var/log/Xorg.x.log  Log messages from the X
+/var/log/alternatives.log  Information by the update-alternatives are logged into this log file. On Ubuntu, update-alternatives maintains symbolic links determining default commands.
+/var/log/btmp  This file contains information about failed login attemps. Use the last command to view the btmp file. For example, last -f /var/log/btmp | more
+/var/log/cups  All printer and printing related log messages
+/var/log/anaconda.log  When you install Linux, all installation related messages are stored in this log file
+/var/log/yum.log  Contains information that are logged when a package is installed using yum
+/var/log/cron  Whenever cron daemon (or anacron) starts a cron job, it logs the information about the cron job in this file
+/var/log/secure  Contains information related to authentication and authorization privileges. For example, sshd logs all the messages here, including unsuccessful login.
+/var/log/wtmp or /var/log/utmp  Contains login records. Using wtmp you can find out who is logged into the system. who command uses this file to display the information.
+/var/log/faillog  Contains user failed login attemps. Use faillog command to display the content of this file.
+
+Access a Virtual Machine's Console
+###########################################################################################################
+go to system tools and virtual machine manager . need to set up virtual machine manager first.
+
+Start and Stop Virtual Machines
+#################################################
+virsh --- virtualization interactive terminal
+list --all -- lists the running virtual machines.
+shutdown "vmname" -- shuts down the client 
+start "vmname" -- starts the client.
+same can be done form virtual machine manager.
+
+
+Start, Stop and Check the Status of Network Services
+###########################################################
+systemctl restart network.service -- restarts network service.
+systemctl status netwrok.service --- checks the status of network services.
+systemctl stop httpd -- stops the apache server
+systemctl stop firewalld -- stops the firewall service.
+systemctl disable httpd -- prevents from starting form bootup.
+
+Securely Transfer Files Between Systems
+##############################################
+scp and sftp goes through port 22
+scp myfile jacob@192.168.0.30:~/ -- copies my file to jacobs home directory
+scp jacob@192.168.0.30:~/myfile2 . -- copies file from jacobs homedirectoy to 
+sftp jacob@54.154.190.8 -- use sftp for a secure file transfer.
+use put and get to fetch the files.
+
+
+List, Create and Delete Partitions on MBR and GPT Disks
+##########################################################
+fdisk -l --list the existing partions.
+MBR partioning -Master boot record partioning. (32 bit based)
+A device using MBR based partition can have only 4 primary partion.each primary partition can only 2tb in size.
+GPT (64 bit based)-- standard for uefi devices. 128 primary partion on a single device. each partion can have as much as 8 ZB of data.
+/dev -- will shows the attached drives /usb etc.
+use fdisk to manage MBR based partition. --- fdisk xvdf(attached device)
+after creating the partion it has to be formatted with a file system. The common one is xfs in redhat.
+mkfs -t xfs xvdf1 -- format it with xfs file system.
+blkid -- shows available block storage devices attached to my system.
+create a location where the device needs to be mounted.best practice to put in /mnt directory.
+mount /dev/xvdf1 /mnt/mymount --- mounts the FS to the mount point.
+umount /mnt/mymount/ -- unmounts the mount point.
+delete partition. ---  fdisk xvdf --- press d 
+enter the partion number to be deleted.
+best practice after partion creation or deletion is to run partprobe --- relaods the partion inforamtion.
+mount -U "c2fcad0e-2e35-4e27-ac9e-9ea5467e4263" /mnt/mymount -- mount using uuid best practice.
+
+create GPT partion.
+gdisk xvdf
+create new partion --n
+first sector defailt
+second sector --- +1G
+give the type number : 8300
+write it :w
+format the filesystem for xfs. --- mkfs -t xfs xvdf1.
+mount it using uuid or name 
+
+Create and Remove Physical Volumes, Assign Physical Volumes to Volume Groups and Create and Delete Logical Volumes
+####################################################################################################
+
+physichal volumes in terms of LVM -- each LVM has an underlying physichal storage unit.this is the physichal volume componet of LVM . physichal voloume can be either a partion, or a device or an entire disk.
+physichhal volumes---> volume group ---> logical volumes.
+volume group --- is a combination of physichal volumes which creates a poll of space which the logical volume manager can allocate.
+extend is small piece of space that can be asigned to a volume group.
+logical volume extends are mapped to the physichal volume extends.
+
+steps 
+gdisk xvdf --- need to create the partion on the disk .. follow the partion process with default and Hexcode 8e00.
+
+pvcreate /dev/xvdf1 /dev/xvdg1 --- creates physichal volumes for LVM.
+pvdisplay --- list available physichal volumes.
+vgcreate battlestar /dev/xvdg1 /dev/xvdf1 -- cretaes the voloume group.
+vgdisplay -- dispaly volumegroup
+lvcreate -n galactica -L 10G battlestar -- create logical volume
+lvdisplay --- displays logical volumes.
+mkfs -t xfs galactica --- format the logical volumes with xfs and mount. 
+lvremove /dev/battlestar/galactica /dev/battlestar/galactica1 --removes the logical volume
+vgremove battlestar --removes the voloume group.
+
+xfs file system can only be increased cannot be decreased.
+ext4 filesystem can be increased or decreased.
+
+Configure Systems to Mount File Systems at Boot by UUID or Label to change from GPT to MBR use parted. 
+######################################################################################################
+ create two MBR partion using fdsik 
+ create one filesystem using xfs and the other using ext4
+
+ xfs_admin -L "name" /dev/xvdf1  --- to create label for a xfs filesystem.
+ xfs_admin -l /dev/xvdf1 -- shows the label
+ tune2fs -L "name" /dev/xvdf2 -- to create a label for ext4
+ tune2fs -l /dev/xvdf2 -- show label
+
+ create persistent mounts.
+ edit /etc/fstab to include filesystem one with UUID and the other with LABEL.
+
+ UUID=2bbe5755-9dc1-4bea-9a0f-99505860b715 /mnt/mount1             xfs     defaults        1 2
+ UID					   mount point 		   filesystem permission   dumpvalue priority(root / should be assigned 1 as a best practice)
+
+ mount -a   -- mount all the available filesystem from fstab.
+ fuser -km /mnt  -- kills the process holding the mount .
+
+Add New Partitions and Logical Volumes and Swap to a System Non-Destructively
+##########################################################################################
+free -m --- available physichal memory and available swap memory.
+swap    --- area of disk which can be alllocated to the kerenel for memory management.
+swap ----   use 2 to 2.5 times of your free memory.
+
+1. create Logical vloume on xvdf.
+	a .fdisk mbr partion.
+	b. pvcreate
+	c. vg create
+	e. lvcreate.
+2. Format with the swap signature. (mkswap /dev/devops/swap)
+3. swapon /dev/mapper/devops-swap --- turn on the swap.
+4. swapoff /dev/mapper/devops-swap ---- swap off 
+5. swapon -a --- will mount multiple swap entries fom fstab.
+6. swapoff -a  --- will unmount all the swaps.
+7. swapon -s -- status of the current swap.
+8. cat /proc/swaps --swap info
+Create, Mount, Unmount and Use VFAT, EXT4 and XFS File Systems
+#######################################################################
+vfat filesystem --- extended version of fat filesystem.
+mkfs.vfat xvdf1 --- creates a vfat filesystem .
+mkfs.ext4 xvdf1 --- creates a ext4 filesystem
+mkfs.xfs xvdf1 --- creates a xfs filesystem.
+
+fsck.vfat /dev/xvdf1 --- to check the filesystem for errors for vfat filesystem
+fsck/dev/xvdf1 --- to check the filesystem for errors for ext4 filesystem.
+fsck cannot run check against a mounted filesystem.
+
+dumpe2fs /dev/xvdf1 --- details about the filesystem.
+
+xfs_info /dev/xvdf1 --gives inforamtion about the xfs filesystem
+xfs_repair /dev/xvdf1 --repairs the xfs filesystem.
+
+Mount and Unmount CIFS and NFS Network File Systems
+###########################################################################
+CIFS --- common internet file system. cifs allows ahre form windwos machine to linux machines.
+common tool for configuring CIFS will be samba.
+
+yum install samba-client cifs-utils nfs-utils
+smbclient -L 10.0.0.100
+mount -t cifs -o username=linuxacademy //10.0.0.100/public /mnt/samba --- mount the samba share.
+mount -t nfs 10.0.0.100:/nfsshare /mnt/nfsshare -- mount an nfs share.
+
+Make the shares persistent by updating the /etc/fstab.
+
+//10.0.0.100/public /mnt/samba cifs username=linuxacademy,password=123456 0 0
+10.0.0.100:/nfsshare /mnt/nfsshare nfs defaults 0 0
+
+
+Extend Existing Logical Volumes
+######################################
+physichal extent is merely a chunk of data. we can move the Physichal extend  from a volume group which maps to one physichal volume to a different physichal volume.
+
+vgextend battlestar /dev/xvdg1 --- extend the battlestart vg group.
+pvmove /dev/xvdf1 --- move the physichal extent of a physichal device.
+vgreduce battlestar /dev/xvdf1 --reduce the battlestar vg group.
+lvextend -L 5G /dev/battlestar/galactica --- extend the logical volume to 5G
+lvextend -L +5G /dev/battlestar/galactica --- extend the logical volume with a n additional 5G
+lvextend -l +50%free /dev/battlestar/galactica --increase it by 50% of the current free space.
+
+xfs_growfs /mnt/myvolume --- grow the filesystem for xfs
+resize2fs /mnt/myvolume ---- grow the filesystem for ext4
+
+Create and Configure Set-GID Directories for Collaboration
+##################################################################
+Set gid on directories to enable collaboration between users. enable inheritance of permission of parent directories.
+All files created inside a directory which has set gid set on it will inherit the permission of the parent directory.
+When you execute "setuid" it executes the program or script as the user owner, that owns the file not as the user that executes the file.
+chmod g+s dir 1--sets the gid on the directory.
+chown :finance dir1 --changes the group owner of dir1
+
+Create and Manage Access Control Lists (ACLs)
+################################################################
+ACLs are supported by xfs and ext4 file system.
+1. useradd startbucks
+2. passwd starbucks
+3. login as a root user and create these  mkdir {dir1,dir2}, touch {file1,file2}
+4. log in one termial as starbucks user
+5. As root --- mkdir {dir1,dir2} ; touch {file1,file2}
+6  getfacl file1 -- get the exisitng acl --matches the octel permission.
+7. setfacl -m u:starbuck:rw file1 --set rw permission for user starbuck for file1
++ sign while listing shows that there is an acl attached to it.
+mask -- maximum level of permission allowed by access control list.
+8. setfacl -m m:rw -- set mask maximum permission ,overrides the acl of user.
+always set the mask after we set the specefic acl
+if use changemod on a file directory that changes the maks
+setfacl -m m:- file3 --- removes all the mask permission.
+setfacl -m g:finance:rw file4 --sets acl for group finance
+setfacl -m g:finance:- file4  --removes acl for group finance.
+default acl -- files and directories inside a directory set with default acl will inherit the permissions.
+setfacl -d -m g:finance:rw dir1 --- sets the default group acl for dir1
+setfacl -R -d -m g:finance:rwx dir4 --- sets the default group recursively.
+setfacl -d -m u:starbuck:rw dir1 --sets the default user acl for dir1
+setfacl -x d:u:starbuck dir4 --removes the default acl for user starbuck
+setfacl -x u:starbuck dir4 --- removes the acl permission for the user starbuck.
+setfacl -x g:finance file1 --removes the acl permission for the group finance.
+setfacl --remove-default dir3 --remove all default permission.
+
+setfacl -m g:finance:rwX dir7---sets the acl for group finance for reand and write and execute on directories.
+setfacl -m g:finance:rwX,u:starbuck:rw dir7 --sets the acl for group and user 
+setfacl -R -m g:finance:rwX,u:starbuck:rw dir7 --- sets ACL recursively.
+
+setfacl -m o::rwx dir1 --sets the octel permission.can be used to set the regular user and group permission with out specifiying anything between" :: ".
+getfacl dir7 | setfacl --set-file=- dir8 --- copy ACL permissions from the dir7 to dir8
+
+Diagnose and Correct File Permission Problems
+#############################################################
+
+stuffs to check if we cannot delete a file 
+a.sticky permission set
+b.are we operating as a root user or local user
+
+every time we update the acl on a file or directory the mask changes.
+directoirs need to have execute permission.
+cp command does not preserve ACL rules 
+mv command preserver ACL rules
+default ACL permission are for inheritance
+
+Configure Networking and Hostname Resolution Statically or Dynamically: Troubleshooting
+#######################################################################################
+
+ifconfig --- traditional way of pulling up the ip .
+ip addr- new way
+ip addr show eth0 -- ip of specefic interface
+ping6 -- ip v6 version of ping
+tracepath --- traces the path of the network .. not all routers suport trace path.
+traceroute ---- traces the network path
+ss -- helps to listening ports and established connections
+ss -a -- shows all listening and established connections.
+ss -at -- shows all listening and established connections for tcp
+ss -au -- shows all listening and established connections for udp.
+ss -atn -- shows all listening and established connections for tcp along with the port number
+ip -s --- shows statistic information.
+ip -s addr show eth0 --show statistics for eth0
+
+
+Configure Networking and Hostname Resolution Statically or Dynamically: Network Manager
+#########################################################################################
+ls /sys/class/net -- gives information of the network interfaces attached.
+nmcli dev status --- shows the status of the network devices.
+nm-connection-editor -- gives the gui tool for network editing .
+nmtui -- text based tool for network management.
+nmcli con show --- shows the active network connections.
+/etc/sysconfig/network-scripts/ -- network config file locations.
+nmcli connection add con-name "Mycon" type ethernet autoconnect yes ifname eth1 -- connect a new network device
+nmcli con show --active --- shows active connections
+nmcli dev show --- shows details of all network devices.
+ip route --- specefies the network routes
+nmcli conn add con-name "mycon-static" type ethernet ifname eth1 ip4 10.0.0.16 gw4 10.0.0.1 --adding a static ip.
+nmcli connection up "mycon-static" --- up the network interface.
+nmcli connection down "mycon-static" -- down the network interface.
+nmcli con modify con-dhcp con-name "con-dhcp-mod" -- modify connection name.
+nmcli con delete con-static --  delete connection
+
+
+Configure Networking and Hostname Resolution Statically or Dynamically: Hostname Configuration
+#################################################################################################
+resolv.conf
+search ec2.internal ---search for hostnames that ends with ec2.internal
+nameserver -- remote nameserver in the internet to look up the hostnames.
+ideally /etc/host is checked before checking the name server in /etc/resolv.conf
+This can be modified by editing the /etc/nsswitch.conf
+hostnamectl set-hostname linuxacademy.berncorp.com --- sets new hostname.
+exec bash --- reflects the hostname change in the shell.
+nmcli con mod "System eth0" +ipv4.dns 8.8.8.8 --- add persistent new entry for additional dns server. -- + adds a new dns entry - removes ..and blank replaces the dns entry.
+update a persistent hostname for AWS rhel 7 instance.-- https://aws.amazon.com/premiumsupport/knowledge-center/linux-static-hostname-rhel7-centos7/ -- not required to update the host value in /etc/host.
+getent hosts -- does a lookup , checks the /etc/ host file as well as the external dns 
+
+Schedule Tasks Using at and cron
+###################################################################
+yum install at -- install at utility
+systemctl list-unit-files -t service | grep atd -- check the state of the atd sevrice
+at ulitly allows us to sechedule the execution of a command at a later point of time.
+at now +5 minutes/hours -- command will execute in 5 minutes/hours.
+at 12:00am --schedule the command at 12 am --ctrl D to start the schedule.
+atq -- lists the jobs in the queue
+atrm "job number" -- removes the job.
+logger -- puts log items in the system log files.
+/etc/at.deny --- if the users name exist in this . the user will not be able tot execute the at command.
+at.allow -- all users in the system except root ofcourse are not allowed to use the at unless the user name exist in the allow file.
+
+cron -- schedule a task to occur frequently over a time period.
+crontab -- is an utility that allows us to edit the users cron.
+systetmcron ---is configured inside our /etc directory.
+cron relies that the system is running during the time perios scheduled . if its down cron misses the task.
+rpm -qa telnet --- qery if the package exist.
+rpm -qc sysstat --- finds the configuration files
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+
+* * * * * root /root/Desktop/uptimelog --every minute every hour every day every month
+*/5 * * * * root /root/Desktop/uptimelog --every 5 minute 
+5 0 * * * root /root/Desktop/uptimelog -- at 12:05 every day every month
+5 0 1 * * root /root/Desktop/uptimelog --at 12:05 1st day of the every month 
+5 0 */2 * * root /root/Desktop/uptimelog -- at 12:05 every 2 days of the month
+5 0 4-12 * * root /root/Desktop/uptimelog --at 12:05 during 4to 12 day of month every month
+5 0 * 1 * root /root/Desktop/uptimelog --at 12:05 every single day of the month only if the month is january
+5 0 * * fri root /root/Desktop/uptimelog --every friday at 12:05
+
+cron.daily -- scripts in here gets execute once a day.
+cron.hourly -- executes once an hour
+cron.weekly -- executes once a month.
+cron.d -- custom crons to be kept
+
+anacron is a utility that allows us to run a command after a given number of days if it has not run.
+anacron is only available for privileged users.
+2 0 uptime /root/Desktop/uptimelog -- entry in anaccron for the uptime to run if it hasnt run in two days.
+anacron -n -- force runs the anacron.
+/var/spool/anacron/ -- the location where the anacron checks to find  the last run time.
+
+
+ Start and Stop Services and Configure Services to Start Automatically at Boot
+#######################################################################################
+
+systemctl -is-enabled httpd -- checks if the service is enabled or disabled.
+systemctl list-unit-files -t service | grep httpd -- shows if the service is enabled or disabled.
+systemctl enable httpd -- start httpd service during the boot time .
+/etc/systemd/system/multi-user.target.wants -- will show the dependent service for the target.
+systemctl list-dependencies multi-user.target | grep httpd
+systemctl disable httpd -- stop httpd service during the boot time .
+
+Configure Systems to Boot into a Specific Target Automatically
+######################################################################
+systemctl get-default -- current target
+systemctl set-default graphical.target -- sets the default target.
+
+Install Red Hat Enterprise Linux Automatically Using Kickstart  --- incomplete do later.
+#######################################################################
+yum install system-config-kickstart --- allows us to use a gui based interface to create a kickstart file.
+rpm -qd telnet -- shows the docs for telent
+
+
+Configure a Physical Machine to Host Virtual Guests
+################################################################
+kvm is already enabled in redhat 7 kerenels by default.
+qemu -- creates the virtualization
+yum install virt-manager qemu-kvm qemu-img
+yum install libvirt libvirt-python python-virtinst libvirt-client
+libvirt allows us to interact with qemu and kvm.
+systemctl enable libvirtd -- makes sure that it starts when boot
+systemctl start libvirtd --- starts the libvirtd
+virsh -- command line to manage virtual machines.
+
+Install Red Hat Enterprise Linux Systems as Virtual Guests
+###############################################################################
+use virtual conenction manager to create the redhat isntance
+use nmcli to bring the network connection up 
+and change the on boot to yes for the network to autoconnect.
+
+Configure Systems to Launch Virtual Machines at Boot
+##################################################################
+enable libvirtd
+virsh   --- command line to manage virtual machines.
+list --all listes all vms
+autostart centos7.0 --- enables auto start for the vm.
+
+
+Configure Network Services to Start Automatically at Boot
+######################################################################
+systemctl list-dependencies multi-user.target | grep network --- check if network is a dependency for mutli-user.target. It generally will be.
+
+enable on boot yes for the network connection.
+nmcli conn show --active -- shows the active connections
+nmcli connection modify "iLAN" connection.autoconnect yes -- sets the on boot to yes for the nw connection.
+yum -y install bash-completion -- if bash completion doesnt work.
+
+
+Configure a System to Use Time Services
+################################################
+timedatectl
+chronyd is a default daemon for ntp service.
+timedatectl set-ntp true  --enable ntp service
+timedatectl set-ntp false --disable ntp service
+timedatectl list-timezones -- list available time zones.
+timedatectl set-timezone Europe/London --sets the time zone.
+timedatectl set-time  --sets the time
+systemctl status chronyd -- checks the status of chronyd
+chronyc sources -v --- shows in the actual servers contacted for ntp. stratum in the command output shows the number of hops to reach the master time server.
+chronyc tracking --- a bit for trackign inforamtion to the time server.
+/etc/ntp.conf -- ntp conf file to edit the ntp pool of servers.
+
+
+Install and Update Software Packages from Red Hat Network, a Remote Repository or the Local File System: YUM
+##################################################################################################################
+
+yum -- package manager which downloads rpm and installs it.
+yum check-update --- if your machine had any updates that needed to be applied without running it interactively.
+yum search ---This is used to find packages when you know something about the package but aren't sure of it's name.You can force searching everything by specifying "all" as the first argument.
+yum info httpd --- gives more info on the httpd package.
+yum install httpd -y --- installs httpd package.
+yum remove httpd --- remove the package httpd and its dependencies.
+yum list installed | grep httpd -- list installed packages and search for httpd.
+yum list all -- list all available packages in the repository and the one installed in the system.
+yum provides /var/www --- Is used to find out which package provides some feature or file.
+yum update httpd -- updates only the httpd package.
+yum clean all -- cleans all the cache /temporary files assocaited with yum.
+
+
+Install and Update Software Packages from Red Hat Network, a Remote Repository or the Local File System: RPM
+###################################################################################################################
+rpm package manager uset to build install verify remove query update individual software packages.
+yum search nano --searches for nano in the repositories.
+yumdownloader nano -- downloads the rpm package for nano.
+
+rpm -ivh --- install verbose hash(progress bar) rpm package.
+rpm -qa --- queris all the package . 
+rpm -qa nano -- queries for the nano package.
+rpm -ql nano --- list the files of nano
+rpm -qd nano --list the docs for nano
+rpm -evh nano --removes the nano
+
+yum localinstall nano-2.3.1-10.el7.x86_64.rpm -- will install from alocal location and list it in yum installed.
+
+
+Install and Update Software Packages from Red Hat Network, a Remote Repository or the Local File System: Managing Repositories
+###############################################################################################################################
+repositories are remote locations that are hosted for the pacakage manger to communicate with to download rpms.
+/etc/yum.repos.d/ -- yum repo config file location. the config file needs to end with .repo
+gpg-check verifies that packages that coming from the repository are allowed to be there in the first palce.
+
+yum repolist -- shows enabled repositories.
+yum repolist all -- shows all enabld and disabled repositories.
+
+yum-config-manager --add-repohttp://dl.fedoraproject.org/pub/epel/7/x86_64 --- creates the repo config files for epel repo
+yum repolist --- shows enabled repolist after addign a new one sycns that in as well.
+
+
+disabling the repo .
+
+	edit the repo config file and make enabled =0
+	yum-config-manager --disable "repoid".
+
+yum-config-manager --enable "repoid" ---- enable the repo.
+
+rm -rf "repo config file" completely remove the repository.
+
+@@@@@
+Enable EPEL Repository in RHEL/CentOS 7/6/5
+## RHEL/CentOS 7 64-Bit ##
+# wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+# rpm -ivh epel-release-7-8.noarch.rpm
+
+
+
+Install and Update Software Packages from Red Hat Network, a Remote Repository or the Local File System: Configuring a Local Repository
+##########################################################################################################################################
+mkdir -p /repos/local
+mount -o loop centos.iso /repos/local
+create the below local repo file under /etc/yum.repos.d/
+-------------------------------------------------------------
+[CentOS-local]
+name=CentOS-local
+baseurl=file:///repos/local
+gpgcheck=0
+#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled = 1
+---------------------------------------------------------------
+yum repolist
+
+
+
+Install and Update Software Packages from Red Hat Network, a Remote Repository or the Local File System: Configuring a Local Repository: Configure the GPG Key
+################################################################################################################################################################
+configuring the gpg key for epel repository.
+
+copy the gpg key from http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 to /etc/pki/rpm-gpg
+create the epel repo conf file using yum config manager
+-------------------------------------------------------
+[dl.fedoraproject.org_pub_epel_7_x86_64]
+name=added from: http://dl.fedoraproject.org/pub/epel/7/x86_64
+baseurl=http://dl.fedoraproject.org/pub/epel/7/x86_64
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+
+-------------------------------------------------------------
+
+
+Update the Kernel Package Appropriately to Ensure a Bootable System
+#################################################################################
+
+uname -r -- shows the current kernel version.
+yum upgrade -- upgrades the kernel.
+yum list "package" -- shows the intalled and available package
+yum clean all -- clean the cache .. run this before yum list to get an updated correct value
+yum downloader kernel -- to manually download the package.
+rpm -ivh kernel-3.10.0-514.2.2.el7.x86_64.rpm -- in stall the latest kernel
+/boot -- will shhow the new initramfs file starting with vmlinuz
+dracut -- command to regenerate the initramfs firle for the latest kernel.
+reboot
+.
+
+Modifying the System Bootloader
+#########################################
+grub2-set-default 0 -- the most recent version of the kernel
+grub2-set-default 1 -- to the previous kernel
+
+
+
+
+ Create, Delete, and Modify Local User Accounts
+###########################################################
+id --- information about the user you are logged in as.
+root user always id 0
+1-200 --system users for specefic redhat process 
+201 -999-- sytem users that who dont own files in the system
+
+/etc/passwd -- file has  all the information about users
+/etc/group -- file has all the groups and assocaited users
+getent group -- List all the groups and assocaited users.
+getent passwd -- list all the information about users
+groups "username" -- gives the details of the groups the user belong to 
+
+apache:x:48:48:Apache:/usr/share/httpd:/sbin/nologin
+username:passwordfile:userid:primarygroupid:arbitaryfield:homedirectoy:the shell the user has
+
+/sbin/nologin -- in the /etc/password ssays that dont allow the user to log in.
+
+each user can have exactly one primary group.
+/etc/shadow --passowrd file
+/etc/skel --any file in this directory will be copied to the users home directory when the user is created.
+/etc/login.defs --- shows the default setting for the users
+/etc/default/useradd -- shows the default for useradd
+
+useradd jeff --created a new user jeff
+passswd jeff --sets the password for user jeff.
+usermod -- modifies the user after its been created
+usermod -L jeff ---locks the user.
+usermod -U jeff --- undo the lock
+usermod -u 1010 jeff -- changes the userid for jeff
+id jeff -- shows the detaisl fro the user jeff.
+usermod -G finance vlad --add user vlad to the finance secondary group.
+The wheel group is a group which limits the number of people who are able to su to root.
+userdel -r jeff --removes the user along with the home and spool directory
+
+
+Change Passwords and Adjust Password Aging for Local User Accounts
+########################################################################
+/etc/login.defs --allow us to set parameters for login and password aging parameters.
+/etc/shadow --content explanation 
+mary:$6$Zq2ziLmW$ocIQoHoZwfuDGcJZrqsuNl2cwZw7m6okCumvQI.D9.jq6lmPQLpEsfZAfDE6t3yu35odD9hlfZEIqShjeMshz/ :17147:0:99999:7:::
+username:passwordhash:date of last password change:minimumum passwordage:max number of passwod change:passord expiry warning:inactive column menas number of days the account remain active after the password expired:expirationdate
+chage-- change user password expiry information
+chage -l jeff --- list the password policy info for the user jeff
+date -d '+40days' +%F --gives the date after 40 days
+chage -E 2017-02-14 contractor --sets the expiry date for the user contractor.
+chage -E -1 contractor -- removes the passwoprd expiry for the user
+chage -M 90 contractor --setds the password expiry date.
+chage -d 0 contractor ---forces a password change on the user.
+chage -I 5 contractor -- sets the account inactive date after the password expiry.
+
+if thepolicy need to be set for all users modify /etc/login.def file.
+
+Create, Delete, and Modify Local Groups and Group Memberships
+##########################################################################
+cat /etc/group --- shows all the groups
+groupadd class1 --creates a new group
+groups contractor ---shows the group the user contractor belongs to
+usermod -g finance tom -- changes the primary group of the user tom.
+primary group determins which group you logged into .to change to supplimetary group you can use newgrp
+newgrp class1 --log in to a new group
+usermod -aG finance tom ---adds/appends tom to the supplimantary group finance.
+id "username" -- shows the primmary and supplimentary groups of the user
+groupmod -n class8 class4 -- changes the name of the group class4 to class8.
+goupdel class2 --deletes the group.
+
+Using set-GID On Directories
+####################################
+The setuid (set user id) is a permission bit, that allows the users to exec a program with the permissions of its owner.
+
+The setgid (set group id) is a bit that allows the user to exec a program with the permissions of the group owner.
+
+when set-gid on directory when files are creatd are within dorectory file will inherit the group ownership of the parent directory
+
+chmod g+s directory1 --sets the gid bit
+
+Configure a System to Use an Existing Authentication Service for User and Group Information: Using Realmd
+###############################################################################################################
+yum install -y realmd ---required to discover the active directory realm.
+realm discover ad.linuxacademy.com -- discover ad.
+install the dependent packages
+realm join ad.linuxacademy.com --- joins to the domain.
+/etc/ssh/sshd_config -- enable kereberos settings
+systemctl restart sshd
+ssh -l test@ad.linuxacademy.com "ipaddress"
+authconfig-gtk --gui for configuirng .
+
+
+Enable password login for aws isntances
+########################################
+edit the /etc/ssh/sshd.conf to enable password login
+restart sshd service
+create a user using useradd
+if the root user privilege need to permittted edit the visudo to add it to the wheel group.
+
+
+Configure Firewall Settings Using firewall-config, firewall-cmd, or iptables
+##############################################################################
+yum install firewalld firewall-config
+systemctl start firewalld
+systemctl enable firewalld
+run time change doesnt require reload of service but only lives during the life time of the service 
+for persistent change 
+firewall-cmd --get-zones -- get the firewall zones.
+firewall-cmd --get-default-zone -- gets the default zone.
+firewall-cmd --list-all -- list the rules of the default zone.
+firewall-cmd --zone=home --list-all -- to view the details of a particular zone.
+firewall-cmd --zone=home --add-source=192.168.1.0/24 --adds the ip addres to the home zone
+firewall-cmd --reload --reloads the firewall rules
+firewall-cmd --zone=home --permanent --add-source=192.168.1.0/24--- makes the firewall rules permanent. and then reload
+firewall-cmd --add-port=80/tcp -- add port 80 to the default zone .
+firewall-config --gui based tool.
+firewall-cmd --panic-on --- stops all the connection andlocks the sytem down except for the console.
+firewall-cmd --get-active-zones  --gives the active zone.
+
+Configure Key-Based Authentication for SSH
+#############################################
+key based authentication allow us to generate a private key which is encrypted and then an assocaited public key.Public key will be stored on the remote machine we are trying to connect to.private key will be stored on the machine we are connecting from.public key can be out in the wild . private key has to be stores secure . public key is a lock and private key being the key kind.
+
+sshkeygen -t rsa -- by default redhat rsa
+copy the public key to the machine where we need acces .. by using ssh-copy-id prabin@54.34.23.214
+or cat ~/.ssh/id_rsa.pub | ssh user@123.45.56.78 "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
+
+ssh user@54.45.56.34 ls --- runs the command on the remote macine.
+ssh-agent bash ; ssh-add --- basically these commands add inside a cache for our current login session our passphrase.
+permission for priavte key 600
+permission for public key 644
+
+
+Introduction to SELinux
+##########################
+SElinux acts like an application level firewall.
+SElinux determines if a specefic proicess has the authority to edit/communicate with other resources on the system.
+a context is assigned to every process directory and port whichis used to determine if aprocess can access that specefic resource.
+boolena is a conditional rule that allows runtime modification of the security of the security policy with out having to laod a new policy.
+
+Set enforcing and permissive modes for SELinux
+###############################################
+getenforce ---shows the current selinux status.
+setenforce 0 --sets to permissive mode.
+setenforce 1 -- enofrce mode
+/etc/selinux/config -- config file for selinux
+need to reboot for the disabling to take effect.
+
+List and identify SELinux file and process context
+#####################################################
+ls -Z -- shows the selinux context ...
+semanage fcontext -l -- list builds contexts
+ps auxZ | grep httpd --list the context for the process as well.
+
+Restore Default File Context
+################################
+if u create a autorelabel file in the root directory that would relabel all the files in the next boot.
+
+1. modify /etc/httpd/conf/httpd.conf to point to /content
+2. mkdir /content
+3. systemctl restart httpd.
+4. create index.html
+5. semanage fcontext -l | grep /var/www-- list builds contexts
+6. semanage fcontext -a -t httpd_sys_content_t '/content(/.*)?' --- adds the context to /content.
+7. restorecon -rV /content -- restore file(s) default SELinux security contexts.
+8. semanage fcontext -d '/content(/.*)?' --deletes the context.
+
+Use Boolean Settings to Modify System SELinux Settings
+############################################################
+boolean value used to enable or disable specefic feature set for a service or feature.
+getsebool -a --list available booleanvalues on the system (currently set for the seession)
+semanage boolean -l --- list default values. 
+/etc/httpd/conf.d/userdir.conf --modify the userdir.conf userdir value to public_html
+create a public_html folder under kevin and set permission accordingily.
+semanage boolean -l | grep httpd_enable_homedirs -- search for the given boolean value and on it.
+setsebool httpd_enable_homedirs on  -- switches on the boolean 
+
+"chcon -R -t httpd_sys_content_t /home/kevin/public_html" -- older version of selinux needs this as well.
+
+Diagnose and Address Routine SELinux Policy Violations
+############################################################
+yum install setroubleshoot-server
+sealert -a /var/log/audit/audit.log -- troubleshoot se linux alerts
+
+#  Install Red Hat Enterprise Linux Automatically Using Kickstart --except
+netstat -atup
