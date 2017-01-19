@@ -36,12 +36,12 @@ grep 'systemd' messages | grep 'start' | -- checks for systemd related messages 
 
 Access remote system using SSH
 ################################
-ssh -i Linux-Default.pem ec2-user@54.229.64.125 -- login to aws box with the pem key
-ssh -i Linux-Default.pem ec2-user@54.229.64.125 ls -latr / --- list the files of the remote system 
-scp -i Linux-Default.pem file1 ec2-user@54.154.190.8:~ - Copy file from a local system to a remote machine home directory
-scp -i Linux-Default.pem ec2-user@54.154.190.8:/home/ec2-user/file2 /home/mobaxterm/Desktop/aws -- copy file from a remote host to the local machine
+ssh -i Linux-Default.pem ec2-user@xx.xx.xx.xx -- login to aws box with the pem key
+ssh -i Linux-Default.pem ec2-user@xx.xx.xx.xx ls -latr / --- list the files of the remote system 
+scp -i Linux-Default.pem file1 ec2-user@xx.xx.xx.xx:~ - Copy file from a local system to a remote machine home directory
+scp -i Linux-Default.pem ec2-user@5xx.xx.xx.xx:/home/ec2-user/file2 /home/mobaxterm/Desktop/aws -- copy file from a remote host to the local machine
 permit root login : /etc/ssh/sshd_config change the permitrootlogin varibale to yes.
-sftp -i Linux-Default.pem ec2-user@54.154.190.8 -- use sftp for a secure file transfer.
+sftp -i Linux-Default.pem ec2-user@xx.xx.xx.xx -- use sftp for a secure file transfer.
 use put and get to fetch the files.
 
 Log in and Switch Users in Multiuser Targets
@@ -355,7 +355,7 @@ Securely Transfer Files Between Systems
 scp and sftp goes through port 22
 scp myfile jacob@192.168.0.30:~/ -- copies my file to jacobs home directory
 scp jacob@192.168.0.30:~/myfile2 . -- copies file from jacobs homedirectoy to 
-sftp jacob@54.154.190.8 -- use sftp for a secure file transfer.
+sftp jacob@xx.xx.xx.xx -- use sftp for a secure file transfer.
 use put and get to fetch the files.
 
 
@@ -478,7 +478,7 @@ mount -t nfs 10.0.0.100:/nfsshare /mnt/nfsshare -- mount an nfs share.
 
 Make the shares persistent by updating the /etc/fstab.
 
-//10.0.0.100/public /mnt/samba cifs username=linuxacademy,password=123456 0 0
+//10.0.0.100/public /mnt/samba cifs username=linuxacademy,password=xxxxxxx 0 0
 10.0.0.100:/nfsshare /mnt/nfsshare nfs defaults 0 0
 
 
@@ -959,10 +959,10 @@ Configure Key-Based Authentication for SSH
 key based authentication allow us to generate a private key which is encrypted and then an assocaited public key.Public key will be stored on the remote machine we are trying to connect to.private key will be stored on the machine we are connecting from.public key can be out in the wild . private key has to be stores secure . public key is a lock and private key being the key kind.
 
 sshkeygen -t rsa -- by default redhat rsa
-copy the public key to the machine where we need acces .. by using ssh-copy-id prabin@54.34.23.214
-or cat ~/.ssh/id_rsa.pub | ssh user@123.45.56.78 "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
+copy the public key to the machine where we need acces .. by using ssh-copy-id bernzzzz@xx.xx.xx.xx
+or cat ~/.ssh/id_rsa.pub | ssh user@xx.xx.xx.xx "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
 
-ssh user@54.45.56.34 ls --- runs the command on the remote macine.
+ssh user@xx.xx.xx.xx ls --- runs the command on the remote macine.
 ssh-agent bash ; ssh-add --- basically these commands add inside a cache for our current login session our passphrase.
 permission for priavte key 600
 permission for public key 644
