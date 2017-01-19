@@ -1,2 +1,2 @@
-# study-notes
-study material from linux academy.
+# study-note.
+My study notes.
