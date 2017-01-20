@@ -129,7 +129,7 @@ Packaging A Customized Container
 
 	docker pull centos:latest --pulls the latest centos image
 
-	docker run -it centos:latest /bin/bash --- lauch the container
+	docker run -it centos:latest /bin/bash --- launch the container
 
 	echo "version 1 of custom inage " > /tmp/image_ver.txt -- create a veriosn file
 
@@ -184,11 +184,17 @@ docker run bernarad/centossshd:v2 echo "helloworld" --- we can start up a contai
 
 docker run -d bernarad/centossshd:v2 /bin/bash -c "while true; do echo hello;sleep 1; done ;" --- run and daemonize a container to run a script or a runningprocess. the out put of the same can be verified suing docker log command
 
+docker ps -a -q -- gives all the container ids
+docker stop $(docker ps -a -q) --stop all the containers
+docker rm $(docker ps -a -q) -- removes all the containers.
+docker rmi $(docker images -q) -- deletes all the images .
 
 Exposing Our Container With Port Redirects
-
 #################################################
 
+For a container to listen to aport that has to be exposed to the underlying host .
 
+docker run -d nginx:latest -- runs the deaemonized nginx container
+docker run -d -p 80:80 nginx:latest --- redirect the local port 80 to the conatiner port 80.
 
 
