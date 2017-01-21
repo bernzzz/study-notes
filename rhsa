@@ -7,7 +7,7 @@ env -shows the environemnt variables
 .bashrc -- non logon shell stores user specefic functions and aliases.
 order of run .bashprofile and then .bashrc
 /etc/profile --shell prefernce for all users in the machine.
-
+/etc/bashrc --- all user specefic fucntions amnd aliases
 
 # correct syntax 
 use man 
