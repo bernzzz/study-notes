@@ -1,5 +1,12 @@
 Install CentOS7 Linux Distribution
 ########################################################
+#basics
+env -shows the environemnt variables
+.bashlogout --user specefic shellprefernce called when you are logging out.
+.bashprofile --user specefic shell prefernces
+.bashrc -- non logon shell stores user specefic functions and aliases.
+order of run .bashprofile and then .bashrc
+/etc/profile --shell prefernce for all users in the machine.
 
 
 # correct syntax 
