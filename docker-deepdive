@@ -249,4 +249,36 @@ docker file
 
 	Dockerfile Directives: ENV
 	############################
-	test
+	ENV --sets sytem wide environmet variable
+    
+	##docker file for a centos7 build with java8
+
+    FROM centos:latest
+	MAINTAINER BERNARD
+
+	RUN useradd -ms /bin/bash bernard
+	RUN yum update -y
+	RUN yum install -y net-utils wget
+	RUN cd ~ && wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.rpm
+	RUN yum localinstall -y ~/jdk-8u112-linux-x64.rpm
+
+
+	USER bernard
+
+	RUN cd ~ && echo "export JAVA_HOME=/usr/java/jdk1.8.0/jre" >> /home/bernard/.bashrc
+
+	ENV JAVA_BIN /usr/java/jdk1.8.0/jre/bin
+
+	Dockerfile Directives: CMD vs. RUN
+	###################################
+	RUN command is used to execute something during the build process and its result becomes part of the build image.
+	CMD use to execute a specefic command but not executed during the build.gets executed during container creation
+
+	#docker file for a centos7 build instantiated to see the CMD fucntioanily
+	FROM centos:latest
+	MAINTAINER BERNARD
+
+	RUN useradd -ms /bin/bash bernard
+	CMD echo "hello world"
+
+	USER bernard
