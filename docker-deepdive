@@ -249,3 +249,4 @@ docker file
 
 	Dockerfile Directives: ENV
 	############################
+	test
