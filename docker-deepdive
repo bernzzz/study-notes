@@ -227,4 +227,25 @@ docker file
     docker build -t=bernard/centosapache:v1 .
     
 
+    Dockerfile Directives: USER and RUN
+    ########################################
 
+    docker exec -u 0 -it "Containername" /bin/bash --- connect tot the ocntainer as a root user
+
+    #docker file for a centos7 build instantiated as a non privilged user
+	FROM centos:latest
+	MAINTAINER BERNARD
+
+	RUN useradd -ms /bin/bash bernard
+	USER bernard
+
+
+	Dockerfile Directives: RUN Order of Execution
+	################################################3
+
+	RUN command is used to execute something during the build process and its result becomes part of the build image.
+	oder of execution of run command matters . for example if a user entry point is defined in the file then any RUN usage after it will be done with privileges of the user.
+	dokcer images get build from the cache to increase the speed.
+
+	Dockerfile Directives: ENV
+	############################
