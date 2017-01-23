@@ -331,10 +331,23 @@ docker file
 
 	 Docker Network: List and Inspect
 	 ######################################
-	 
-test
+	 docker 0 is a vridg adapter binding to the host adapters.
+	 docker network ls --list all the network asscoiated with current host.
+	 docker network inspect bridge --- gives a whole bunch of details for the bridge connection --detailed
 
 
+	 Docker Network: Create and Remove
+	 ###################################
+	 man docker-network-create --- putting dash btw muli word commands generally gives the man page assocaited. prefix man.
+	 docker network create --subnet 10.1.0.0/24 --gateway 10.1.0.1 mybridge01 -- creates a new bridge adapter for docker.
+	 note : dont remove the default docker bridge adapter accidentally . it would be then better off to re-install docker
+	 docker network rm mybridge01 -- removes the network adapter.
+
+	 Docker Network: Assign to Containers
+	 #######################################
+	 docker network create --subnet 10.1.0.0/16 --gateway 10.1.0.1 --ip-range 10.1.4.0/24 --driver bridge mybridge04 -- defines a specefic ip range while creating the network adapter.
+	 docker run -it --network mybridge04 centos:latest -- launch a container with the new network adapter.
+	 docker run -it --network mybridge04 --ip 10.1.4.100 centos:latest ---gives a defined a predeifned ip.
 
 
 
