@@ -351,3 +351,22 @@ docker file
 
 
 
+	Inspect Container Processes
+	################################
+
+	docker exec "containername" /bin/ps aux | grep "process name" -- identify the status of a process running inside a container.
+	docker top pensive_murdock --- gives the top list of the container.
+	starting two /bin/bash process will make sure that the container still runs even after one is exited. so one can be daemonized and other can be interactive.
+	docker stats pensive_murdock --gives a constantly updated view of the process running inside a container.
+
+	 Previous Container Management
+	 #################################
+	 docker ps -a -q | wc -l ---count of containers running on the system.
+	 docker rm $(docker ps -a -q) -- removes all the containers.
+	 docker rmi $(docker images -q) -- deletes all the images .
+	 docker rm -f "container name"-- removes containers forcefully.
+	 /var/lib/docker/containers --- stop the docekr service and removing the container directories from the filesystem as well will remove them.
+
+	 Controlling Port Exposure on Containers
+	 #########################################
+	 
