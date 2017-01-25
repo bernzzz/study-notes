@@ -369,4 +369,48 @@ docker file
 
 	 Controlling Port Exposure on Containers
 	 #########################################
-	 
+	 exposign a port means that these ports can be remapped from the container to the host.
+	 docker run -itd -p 80 "containername" ---maps port 80 to any hgh ports on local host
+	 docker run -itd -p 8080:80 "containername" ---maps port 80 to 8080 on local host.
+	 docker run -itd -P "containername" --- maps what ever ports exposed to a high port range in the local host.
+
+	 Naming Our Containers
+	 ########################
+
+	 docker run -itd --name chezawesome nginx:latest ----- -name floag used to name the containers
+	 docker rename "contanier name " "new container names" -- renames the container.
+
+
+	 Docker Events
+	 ################
+
+	 docker events --since 3h --- docker events happening in the containers since last 3 hours.
+	 docker kill "container name" --kills the container
+	 Docker containers will report the following events:
+	 attach, commit, copy, create, destroy, detach, die, exec_create, exec_detach, exec_start, export, kill, oom,
+	 pause, rename, resize, restart, start, stop, top, unpause, update
+
+	 docker events --filter event=attach ---filter attach events of docker containers.
+
+	 Managing and Removing Base Images
+	 ###################################
+
+	 docker rmi $(docker images -q) -- deletes all the images .
+	 docker rmi -f "image name" -- force removes the image.
+
+	 Saving and Loading Docker Images
+	 ##################################
+
+	 docker save --output bernard.apache.manual.tar bernard/centosapachemanual:v1 --- save a docker image as a tar file . gzip the tar to compress it .
+	 docker load --input bernard.apache.manual.tar.gz --- load the image from the saved gzip file
+
+	  Image History
+	  #################
+	  docker history nginx:latest --- gives the history of the image.
+
+	  Taking Control of Our Tags
+	  ############################
+	  docker tag e8de5ad5144d bernard/centosapachemanualnewtag:v1 -- Assigns a new alias to an image in a registry.
+
+	  Pushing to Docker Hub
+	  #########################
