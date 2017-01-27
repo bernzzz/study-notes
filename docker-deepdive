@@ -414,3 +414,8 @@ docker file
 
 	  Pushing to Docker Hub
 	  #########################
+    create a priavte repository userid/repo -- userid/centosapache
+    tag an existing image : docker tag bernardcentosapache:v1 userid/centosapache:v1
+    docker push userid/centosapache:v1
+     
+     
