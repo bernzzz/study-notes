@@ -404,18 +404,74 @@ docker file
 	 docker save --output bernard.apache.manual.tar bernard/centosapachemanual:v1 --- save a docker image as a tar file . gzip the tar to compress it .
 	 docker load --input bernard.apache.manual.tar.gz --- load the image from the saved gzip file
 
-	  Image History
-	  #################
-	  docker history nginx:latest --- gives the history of the image.
+	 Image History
+	 #################
+	 docker history nginx:latest --- gives the history of the image.
 
-	  Taking Control of Our Tags
-	  ############################
-	  docker tag e8de5ad5144d bernard/centosapachemanualnewtag:v1 -- Assigns a new alias to an image in a registry.
+	 Taking Control of Our Tags
+	 ############################
+	 docker tag e8de5ad5144d bernard/centosapachemanualnewtag:v1 -- Assigns a new alias to an image in a registry.
 
-	  Pushing to Docker Hub
-	  #########################
-    create a priavte repository userid/repo -- userid/centosapache
-    tag an existing image : docker tag bernardcentosapache:v1 userid/centosapache:v1
-    docker push userid/centosapache:v1
+	 Pushing to Docker Hub
+	 #########################
+     create a priavte repository userid/repo -- userid/centosapache
+     tag an existing image : docker tag bernardcentosapache:v1 userid/centosapache:v1
+     docker push userid/centosapache:v1
+ 
+ 	 Building a Web Farm for Development and Testing (Part One)    
+ 	 ##############################################################
+     Pull centos:centos6
+     install wget
+     enable epel repo
+     yum install which sudo httpd openssh-server
+     edit .bshrc to start httpd and sshd service.
+     commmit the image to centos6:baseweb
+
+     Building a Web Farm for Development and Testing (Part Two)
+     ############################################################
+     downlaod web template from oswd.org locally to the docker host and initaite a git contaier on the downloaded folder.
+     create a new container mounitng the web repor directory to /var/www/html of the container
+     expose the ports
+     docker run -itd --name webtest1 -v /home/bernard/Docker/Webrepo/bluefreedom3/:/var/www/html -p 80:80 centos6:baseweb
+
+
+     Building a Web Farm for Development and Testing (Part Three)
+     #################################################################
      
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
      
