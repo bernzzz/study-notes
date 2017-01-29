@@ -432,16 +432,22 @@ docker file
      downlaod web template from oswd.org locally to the docker host and initaite a git contaier on the downloaded folder.
      create a new container mounitng the web repor directory to /var/www/html of the container
      expose the ports
-     docker run -itd --name webtest1 -v /home/bernard/Docker/Webrepo/bluefreedom3/:/var/www/html -p 80:80 centos6:baseweb
+     docker run -itd --name webtest -v /home/bernard/Docker/Webrepo/bluefreedom3/:/var/www/html -p 80:80 centos6:baseweb
 
 
      Building a Web Farm for Development and Testing (Part Three)
      #################################################################
-     
+	 docker run -itd --name webtest -v /home/bernard/Docker/Webrepo/bluefreedom3/:/var/www/html -p 80:80 centos6:baseweb --- mount an underlying file sytem and expose the port.
+	 add an ssh user and test connectivity 
+	 commit the change 
+	 docker run -itd --name webserver -v /home/bernard/Docker/Webrepo/bluefreedom3/:/var/www/html -p 80:80 -p 7080:22 centos6:serverv1 -- port redirection of 80 and 22 to underlying host
 
+	 Building a Web Farm for Development and Testing (Part Four)
+	 ###########################################################
+	 mv webrepo to web git 
+	 clone webgit to webrepo --basically to keep the mount seperate from the git repo.
 
-
-   
+    
 
 
 
