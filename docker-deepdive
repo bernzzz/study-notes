@@ -430,7 +430,7 @@ docker file
      Building a Web Farm for Development and Testing (Part Two)
      ############################################################
      downlaod web template from oswd.org locally to the docker host and initaite a git contaier on the downloaded folder.
-     create a new container mounitng the web repor directory to /var/www/html of the container
+     create a new container mounitng the web repo directory to /var/www/html of the container
      expose the ports
      docker run -itd --name webtest -v /home/bernard/Docker/Webrepo/bluefreedom3/:/var/www/html -p 80:80 centos6:baseweb
 
@@ -446,7 +446,47 @@ docker file
 	 ###########################################################
 	 mv webrepo to web git 
 	 clone webgit to webrepo --basically to keep the mount seperate from the git repo.
+   launch two containers one at 8081 and hte other at 8082
+   docker run -itd --name webtest2 -v /home/ec2-user/webwww/:/var/www/html -p 8082:80 centos6:webserverv1
+   install nginx for proxy and load balancing.
+   nginx setup
+   #############	
+   mkdir /etc/nginx/sites-enabled	
+   mkdir /etc/nginx/sites-available
+   
+   include /etc/nginx/sites-enabled/*.conf;   in http {} block in /etc/nginx/nginx.conf
+   vi default.conf in sites-available
+   
+     upstream containerapp {
+  
+                  server 34.249.62.134:8081;
+                  server 34.249.62.134:8082;
+  
+  }
+  
+  server {
+          listen *:80;
+          server_name 34.249.62.134;
+          index index.html index.htm index.php
+  
+          access_log /var/log/nginx/localweb.log;
+          error_log /var/log/nginx/localerror.log;
+  
+          location / {
+  
+                  proxy_pass http://containerapp;
+                  }
+  
+  }
 
+   
+   ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
+   
+   
+   restart nginx service.
+   
+   
+   
     
 
 
