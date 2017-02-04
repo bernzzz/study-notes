@@ -485,9 +485,54 @@ docker file
    
    restart nginx service.
    
+   Integrating Custom Network In Your Docker Containers -- incomplete needs a way to let docker know about this in centos7 ..preferd to user the docker-network-create
+   #####################################################
+
+   ip link add br10 type bridge --- create a new bridge adapter
+   ip addr add 10.10.100.1/24 dev br10 --defines a subnet range 
+   ip link set br10 up --bring the interface up.
+
+   Testing Version Compatibility - Using Tomcat and Java (Part One)
+   ####################################################################
+
+   copy apache * and jdk * and sample war to downloads folder and mount it while the ocntainer is initiated
+   yum update
+   yum install git wget sudo which
+   untar to /tmp and move to /opt/java
+   alternatives is a command method whre in which we can set directory links so that when we additional instance of java down the line we can pick the version of java the systemc onfiguration is set for .
+
+   alternatives --install /usr/bin/java java /opt/java/bin/java 2
+   alternatives --config java --- completes the java configuration.
+   alternatives --install /usr/bin/jar jar /opt/java/bin/jar 2
+   alternatives --install /usr/bin/javac javac /opt/java/bin/javac 2
+   alternatives --set jar /opt/java/bin/jar
+   alternatives --set javac /opt/java/bin/javac
+
+
+   docker commit java7 centos6:java7
+   prepare a new container for java8 as well
+
+
+   Testing Version Compatibility - Using Tomcat and Java (Part Two)
+   ####################################################################
+   create four contianer which has java7tomcat7 java7tomcat8 java8tomcat7 java8 tomcat8 and commit
+
+   for installing tomcat 
+
+   untar the apache tar and mv to /opt/tomcat and set the below env
+
+   export JAVA_HOME=/opt/java
+   export JAVA_JRE=/opt/java
+   export CATALINA_BASE=/opt/tomcat
+   export CATALINA_HOME=/opt/tomcat
+   export CATALINA_TMPDIR=/opt/tomcat/temp 
    
-   
-    
+   make 4 docker images by committing them.
+
+
+
+
+
 
 
 
