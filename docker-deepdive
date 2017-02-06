@@ -1,0 +1,582 @@
+Introduction to Docker
+###########################
+
+Docker is an open source project that automates the deployment of applications inside software containers,by providing an additional layer of abstraction and automation of operating 
+
+system- levelvirtulaization on linux.
+
+
+Containers Vs. Virtual Machines
+##################################
+
+VM single OS . Containers can share OS ..
+
+http://www.slideshare.net/dotCloud/docker-intro-november
+
+
+Docker Architecture
+#####################
+http://www.slideshare.net/dotCloud/docker-intro-november
+
+Container Architecture 
+
+	Docker is a client server application where both the daemon and client can be run on the same system or you can connect a Docker client with a remote daemon.
+
+docker clieant and daemons can communicate via sockets or through a RESTful API.
+
+
+main components
+
+1.Daemon
+
+2.Client
+
+3.Docker.io Registry.
+
+
+Instead of virtualizing hardware containers rest on a single linux instance. docker engine is an encapsulating process on the underlying system.
+
+
+Docker HUB
+###################
+
+The docker Hub is a public registry/repository maintained by docker Inc contains a large number of images that you can download and use to build containers.
+
+http://hub.docker.com
+
+
+Docker Installation
+
+#############################3
+
+ 1.yum update
+
+ 2.Add the yum repo.
+
+
+
+[dockerrepo]
+
+name=Docker Repository
+
+baseurl=https://yum.dockerproject.org/repo/main/centos/7/
+
+enabled=1
+
+gpgcheck=1
+
+gpgkey=https://yum.dockerproject.org/gpg
+
+
+
+3.yum install docker-engine
+
+4.Enable the service. systemctl enable docker.service
+
+5.start the docker --- systemctl start docker
+
+6.verify -- docker run --rm hello-world
+
+
+
+Add user to the docker group for enabling access for individual users to run docker.
+
+sudo usermod -aG docker ec2-user
+
+docekr images -- see the available repos.
+
+docker --version --- see the verion.
+
+
+Creating Our First Image
+
+###################################
+
+docker version --gives the client and server version.
+
+docker info --detailed docker information 
+
+/var/lib/docker ---contains the docker files
+
+docke ps -- shows the current running containers
+
+docker ps -a -- show the containers run some time ago.
+
+docker images -- shows the docker image info.
+
+/var/lib/docker/containers/ --container info.
+
+/var/lib/docker/image/devicemapper/imagedb/content/sha256 -- image info
+
+docker pull ubuntu:"tag" --- pull the ubuntu image with the righ tag.
+
+docker run -i -t ubuntu:xenial /bin/bash --- i for interactive -t for attachign to tty and /bin/bash --the command --runs ubuntu:xneial
+
+docker restart "container name/ID" --restarts the container process.
+
+docker inspect "container name/ID" --gives all the info about the container
+
+docker attach "container name/ID" --- attach/enter  into the container.
+
+
+
+Packaging A Customized Container
+
+#####################################
+
+1.packing a cutomized container using git commit 
+
+
+	docker pull centos:latest --pulls the latest centos image
+
+	docker run -it centos:latest /bin/bash --- launch the container
+
+	echo "version 1 of custom inage " > /tmp/image_ver.txt -- create a veriosn file
+
+	update and install telnet and open ssh server and add prabin user.
+
+	docker commit -m "Installed ssh telnet and added user prabin" -a bernard pedantic_swirles bernard/centos:v1----use docker commit to commit the chanegs to a new image.
+
+
+
+2.packing a cutomized container using a docker file
+
+
+	mkdir build
+
+	vim Dockerfile --
+
+	
+
+		FROM centos:latest
+
+		MAINTAINER bernard <*******@gmail.com>
+
+		RUN yum update -y
+
+		RUN yum install openssh-server -y
+
+		RUN useradd jhon
+
+
+
+	docker build -t=bernard\centossshdonly:v2 . --- the dot assumes the docker files resides in the current directory.
+
+
+
+Running Container Commands With Docker
+
+#######################################
+
+load of a docker container will reflect the underlying operating system.
+
+docker logs "container name" --- shows the things that been run interms of the container.
+
+
+
+docker exec "container name" ls ---executes the command inside the container and gives the result with out attching the container.
+
+docker exec "container name" cat /etc/profile --executes the command inside the container and gives the result with out attching the container.
+
+
+
+docker run bernarad/centossshd:v2 echo "helloworld" --- we can start up a container for just running a command 
+
+docker run -d bernarad/centossshd:v2 /bin/bash -c "while true; do echo hello;sleep 1; done ;" --- run and daemonize a container to run a script or a runningprocess. the out put of the same can be verified suing docker log command
+
+docker ps -a -q -- gives all the container ids
+docker stop $(docker ps -a -q) --stop all the containers
+docker rm $(docker ps -a -q) -- removes all the containers.
+docker rmi $(docker images -q) -- deletes all the images .
+
+Exposing Our Container With Port Redirects
+#################################################
+
+For a container to listen to aport that has to be exposed to the underlying host .
+
+docker run -d nginx:latest -- runs the deaemonized nginx container
+docker run -d -p 80:80 nginx:latest --- redirect the local port 80 to the conatiner port 80.
+
+Packaging an apache server manually and using docker file.
+##############################################################
+
+manually
+	docker pull centos:latest
+	docker run -it centos:latest /bin/bash
+	yum update -y
+	yum install httpd
+	exit
+	docker commit "containername" "newimagename"
+	docker run -d bernard/centosapachemanual:v1 /usr/sbin/httpd -D FOREGROUND
+
+
+docker file
+	#docker file for centos with apache
+	FROM centos:latest
+	MAINTAINER bernard
+
+	#update image
+	RUN yum update -y
+	RUN yum install httpd -y
+	RUN yum install telnet -y
+
+	#start the service 
+	CMD ["-D", "FOREGROUND"]
+	ENTRYPOINT ["/usr/sbin/httpd"]
+
+    docker build -t=bernard/centosapache:v1 .
+    
+
+    Dockerfile Directives: USER and RUN
+    ########################################
+
+    docker exec -u 0 -it "Containername" /bin/bash --- connect tot the ocntainer as a root user
+
+    #docker file for a centos7 build instantiated as a non privilged user
+	FROM centos:latest
+	MAINTAINER BERNARD
+
+	RUN useradd -ms /bin/bash bernard
+	USER bernard
+
+
+	Dockerfile Directives: RUN Order of Execution
+	################################################3
+
+	RUN command is used to execute something during the build process and its result becomes part of the build image.
+	oder of execution of run command matters . for example if a user entry point is defined in the file then any RUN usage after it will be done with privileges of the user.
+	dokcer images get build from the cache to increase the speed.
+
+	Dockerfile Directives: ENV
+	############################
+	ENV --sets sytem wide environmet variable
+    
+	##docker file for a centos7 build with java8
+
+    FROM centos:latest
+	MAINTAINER BERNARD
+
+	RUN useradd -ms /bin/bash bernard
+	RUN yum update -y
+	RUN yum install -y net-utils wget
+	RUN cd ~ && wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.rpm
+	RUN yum localinstall -y ~/jdk-8u112-linux-x64.rpm
+
+
+	USER bernard
+
+	RUN cd ~ && echo "export JAVA_HOME=/usr/java/jdk1.8.0/jre" >> /home/bernard/.bashrc
+
+	ENV JAVA_BIN /usr/java/jdk1.8.0/jre/bin
+
+	Dockerfile Directives: CMD vs. RUN
+	###################################
+	RUN command is used to execute something during the build process and its result becomes part of the build image.
+	CMD use to execute a specefic command but not executed during the build.gets executed during container creation
+	CMD can be overwritten by the commands passed while initiating the container.
+
+	#docker file for a centos7 build instantiated to see the CMD fucntioanily
+	FROM centos:latest
+	MAINTAINER BERNARD
+
+	RUN useradd -ms /bin/bash bernard
+	CMD echo "hello world"
+
+	USER bernard
+
+
+	Dockerfile Directives: ENTRYPOINT
+	###################################
+	Entrypoint : takes an argument tht consist of the command how ever if we use entrypoint we are settign the concrete default application every time the container is launched.
+	entrypoint cannot be overwritten while launching the ocntainer though a seprate process can be initatiated after the container is launched by running the exec command.
+
+	#docker file for a centos7 build instantiate for entrypoint.
+	FROM centos:latest
+	MAINTAINER BERNARD
+
+	RUN useradd -ms /bin/bash bernard
+	ENTRYPOINT echo "hello world for all"
+
+	USER bernard
+
+	Dockerfile Directives: EXPOSE
+	###################################
+	docker run -d --name apacheweb1 bernard/centos7apacheexpose:v1 --- defines the container name
+
+	#docker file for centos with apache
+	FROM centos:latest
+	MAINTAINER bernard
+
+	#update image
+	RUN yum update -y
+	RUN yum install httpd -y
+	RUN yum install telnet -y
+
+	EXPOSE 80
+	#start the service 
+	#CMD ["-D", "FOREGROUND"]
+	ENTRYPOINT apachectl "-DFOREGROUND"
+
+
+	exposes port 80 to the local machine.
+
+	 Container Volume Management
+	 ###############################
+	 -v parameter during the build allows us to manage volumes . creates the mount outside the conaines unified file system and subsequnelty exposing it to underlying hostsystem.
+	 it gives us ability to provide direct acces from a host mount to container itself. you cannot specify the same in docker files as it inerupts the portability of docekr file.
+
+	 docker run -it -v /mydir centos:latest -- mounts /mydir inside the container the location for the same in the local host will be /var/lib/docker/voloumes/dhjksdhf@#@#/_dir.The directory name of the container can be found by the inspect command grepping for the source of the mount .
+
+	 docker run -it -v /tmp/storage/:/mydir centos:latest -- mounts /mydir inside container mapping to a location in the local host.
+
+	 Docker Network: List and Inspect
+	 ######################################
+	 docker 0 is a vridg adapter binding to the host adapters.
+	 docker network ls --list all the network asscoiated with current host.
+	 docker network inspect bridge --- gives a whole bunch of details for the bridge connection --detailed
+
+
+	 Docker Network: Create and Remove
+	 ###################################
+	 man docker-network-create --- putting dash btw muli word commands generally gives the man page assocaited. prefix man.
+	 docker network create --subnet 10.1.0.0/24 --gateway 10.1.0.1 mybridge01 -- creates a new bridge adapter for docker.
+	 note : dont remove the default docker bridge adapter accidentally . it would be then better off to re-install docker
+	 docker network rm mybridge01 -- removes the network adapter.
+
+	 Docker Network: Assign to Containers
+	 #######################################
+	 docker network create --subnet 10.1.0.0/16 --gateway 10.1.0.1 --ip-range 10.1.4.0/24 --driver bridge mybridge04 -- defines a specefic ip range while creating the network adapter.
+	 docker run -it --network mybridge04 centos:latest -- launch a container with the new network adapter.
+	 docker run -it --network mybridge04 --ip 10.1.4.100 centos:latest ---gives a defined a predeifned ip.
+
+
+
+	Inspect Container Processes
+	################################
+
+	docker exec "containername" /bin/ps aux | grep "process name" -- identify the status of a process running inside a container.
+	docker top pensive_murdock --- gives the top list of the container.
+	starting two /bin/bash process will make sure that the container still runs even after one is exited. so one can be daemonized and other can be interactive.
+	docker stats pensive_murdock --gives a constantly updated view of the process running inside a container.
+
+	 Previous Container Management
+	 #################################
+	 docker ps -a -q | wc -l ---count of containers running on the system.
+	 docker rm $(docker ps -a -q) -- removes all the containers.
+	 docker rmi $(docker images -q) -- deletes all the images .
+	 docker rm -f "container name"-- removes containers forcefully.
+	 /var/lib/docker/containers --- stop the docekr service and removing the container directories from the filesystem as well will remove them.
+
+	 Controlling Port Exposure on Containers
+	 #########################################
+	 exposign a port means that these ports can be remapped from the container to the host.
+	 docker run -itd -p 80 "containername" ---maps port 80 to any hgh ports on local host
+	 docker run -itd -p 8080:80 "containername" ---maps port 80 to 8080 on local host.
+	 docker run -itd -P "containername" --- maps what ever ports exposed to a high port range in the local host.
+
+	 Naming Our Containers
+	 ########################
+
+	 docker run -itd --name chezawesome nginx:latest ----- -name floag used to name the containers
+	 docker rename "contanier name " "new container names" -- renames the container.
+
+
+	 Docker Events
+	 ################
+
+	 docker events --since 3h --- docker events happening in the containers since last 3 hours.
+	 docker kill "container name" --kills the container
+	 Docker containers will report the following events:
+	 attach, commit, copy, create, destroy, detach, die, exec_create, exec_detach, exec_start, export, kill, oom,
+	 pause, rename, resize, restart, start, stop, top, unpause, update
+
+	 docker events --filter event=attach ---filter attach events of docker containers.
+
+	 Managing and Removing Base Images
+	 ###################################
+
+	 docker rmi $(docker images -q) -- deletes all the images .
+	 docker rmi -f "image name" -- force removes the image.
+
+	 Saving and Loading Docker Images
+	 ##################################
+
+	 docker save --output bernard.apache.manual.tar bernard/centosapachemanual:v1 --- save a docker image as a tar file . gzip the tar to compress it .
+	 docker load --input bernard.apache.manual.tar.gz --- load the image from the saved gzip file
+
+	 Image History
+	 #################
+	 docker history nginx:latest --- gives the history of the image.
+
+	 Taking Control of Our Tags
+	 ############################
+	 docker tag e8de5ad5144d bernard/centosapachemanualnewtag:v1 -- Assigns a new alias to an image in a registry.
+
+	 Pushing to Docker Hub
+	 #########################
+     create a priavte repository userid/repo -- userid/centosapache
+     tag an existing image : docker tag bernardcentosapache:v1 userid/centosapache:v1
+     docker push userid/centosapache:v1
+ 
+ 	 Building a Web Farm for Development and Testing (Part One)    
+ 	 ##############################################################
+     Pull centos:centos6
+     install wget
+     enable epel repo
+     yum install which sudo httpd openssh-server
+     edit .bshrc to start httpd and sshd service.
+     commmit the image to centos6:baseweb
+
+     Building a Web Farm for Development and Testing (Part Two)
+     ############################################################
+     downlaod web template from oswd.org locally to the docker host and initaite a git contaier on the downloaded folder.
+     create a new container mounitng the web repo directory to /var/www/html of the container
+     expose the ports
+     docker run -itd --name webtest -v /home/bernard/Docker/Webrepo/bluefreedom3/:/var/www/html -p 80:80 centos6:baseweb
+
+
+     Building a Web Farm for Development and Testing (Part Three)
+     #################################################################
+	 docker run -itd --name webtest -v /home/bernard/Docker/Webrepo/bluefreedom3/:/var/www/html -p 80:80 centos6:baseweb --- mount an underlying file sytem and expose the port.
+	 add an ssh user and test connectivity 
+	 commit the change 
+	 docker run -itd --name webserver -v /home/bernard/Docker/Webrepo/bluefreedom3/:/var/www/html -p 80:80 -p 7080:22 centos6:serverv1 -- port redirection of 80 and 22 to underlying host
+
+	 Building a Web Farm for Development and Testing (Part Four)
+	 ###########################################################
+	 mv webrepo to web git 
+	 clone webgit to webrepo --basically to keep the mount seperate from the git repo.
+   launch two containers one at 8081 and hte other at 8082
+   docker run -itd --name webtest2 -v /home/ec2-user/webwww/:/var/www/html -p 8082:80 centos6:webserverv1
+   install nginx for proxy and load balancing.
+   nginx setup
+   #############	
+   mkdir /etc/nginx/sites-enabled	
+   mkdir /etc/nginx/sites-available
+   
+   include /etc/nginx/sites-enabled/*.conf;   in http {} block in /etc/nginx/nginx.conf
+   vi default.conf in sites-available
+   
+     upstream containerapp {
+  
+                  server 34.249.62.134:8081;
+                  server 34.249.62.134:8082;
+  
+  }
+  
+  server {
+          listen *:80;
+          server_name 34.249.62.134;
+          index index.html index.htm index.php
+  
+          access_log /var/log/nginx/localweb.log;
+          error_log /var/log/nginx/localerror.log;
+  
+          location / {
+  
+                  proxy_pass http://containerapp;
+                  }
+  
+  }
+
+   
+   ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
+   
+   
+   restart nginx service.
+   
+   Integrating Custom Network In Your Docker Containers -- incomplete needs a way to let docker know about this in centos7 ..preferd to user the docker-network-create
+   #####################################################
+
+   ip link add br10 type bridge --- create a new bridge adapter
+   ip addr add 10.10.100.1/24 dev br10 --defines a subnet range 
+   ip link set br10 up --bring the interface up.
+
+   Testing Version Compatibility - Using Tomcat and Java (Part One)
+   ####################################################################
+
+   copy apache * and jdk * and sample war to downloads folder and mount it while the ocntainer is initiated
+   yum update
+   yum install git wget sudo which
+   untar to /tmp and move to /opt/java
+   alternatives is a command method whre in which we can set directory links so that when we additional instance of java down the line we can pick the version of java the systemc onfiguration is set for .
+
+   alternatives --install /usr/bin/java java /opt/java/bin/java 2
+   alternatives --config java --- completes the java configuration.
+   alternatives --install /usr/bin/jar jar /opt/java/bin/jar 2
+   alternatives --install /usr/bin/javac javac /opt/java/bin/javac 2
+   alternatives --set jar /opt/java/bin/jar
+   alternatives --set javac /opt/java/bin/javac
+
+
+   docker commit java7 centos6:java7
+   prepare a new container for java8 as well
+
+
+   Testing Version Compatibility - Using Tomcat and Java (Part Two)
+   ####################################################################
+   create four contianer which has java7tomcat7 java7tomcat8 java8tomcat7 java8 tomcat8 and commit
+
+   for installing tomcat 
+
+   untar the apache tar and mv to /opt/tomcat and set the below env
+
+   export JAVA_HOME=/opt/java
+   export JAVA_JRE=/opt/java
+   export CATALINA_BASE=/opt/tomcat
+   export CATALINA_HOME=/opt/tomcat
+   export CATALINA_TMPDIR=/opt/tomcat/temp 
+   
+   make 4 docker images by committing them.
+
+   Testing Version Compatibility - Using Tomcat and Java (Part Three)
+   #########################################################################
+   Launch a new container and by passing the env 
+   docker run -it --name=tomcat7web -v /home/bernard/Docker/Downloads/:/root/Downloads -p 8081:8080 -e JAVA_HOME=/opt/java -e JAVA_JRE=/opt/java centos6:java7tomcat7
+
+   copy the war file to /opt/tomcat/webapps
+
+   start tomcat and test the app.
+
+   do the same for all comtaimers to test the compatibility of app to different versions of java and tomcat .
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
