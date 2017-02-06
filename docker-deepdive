@@ -529,6 +529,20 @@ docker file
    
    make 4 docker images by committing them.
 
+   Testing Version Compatibility - Using Tomcat and Java (Part Three)
+   #########################################################################
+   Launch a new container and by passing the env 
+   docker run -it --name=tomcat7web -v /home/bernard/Docker/Downloads/:/root/Downloads -p 8081:8080 -e JAVA_HOME=/opt/java -e JAVA_JRE=/opt/java centos6:java7tomcat7
+
+   copy the war file to /opt/tomcat/webapps
+
+   start tomcat and test the app.
+
+   do the same for all comtaimers to test the compatibility of app to different versions of java and tomcat .
+
+
+
+
 
 
 
