@@ -1,0 +1,167 @@
+#** snippets
+#Core concepts
+############ ##############
+
+bash_profile --gets executed only when you log in 
+bashrc -- runs when a new shell is initiated likes of opening a new terminal.
+export PATH= $PATH:$HOME/Desktop -- Appending new path to $PATH variable.
+alias lZ='ls -alZ | more' --sets alias
+bash -- creates a new shell , runs bashrc. { exec bash will consume. the same process ID and do the same thing}
+bash_history -- history of what we typed as the current user.
+HISTCONTROL-- variable to change the behaviour of bash_history 
+export HISTCONTROL=$HISTCONTROL:ignorespace --- once set , any command written in the shell after the space will not be tracked by bash_history 
+bash_logout -- last thing that happens when we issue the log out command . works when we do a clean exit .
+#!/bin/bash --simply means that the script needs to be executed in a bash shell
+`` -- commands enclosed in back ticks gets executed for eg "TODAYDATE=`date' -- will execute command date and store the value in TODAYDATE."
+shopt -s expand_aliases --- turns on shell scripting expanding aliases with in the subshell.
+
+exit status 0 -- good 
+exit status non-zero -- bad
+echo $? -- shows the last exit status . 
+
+set -e -- lets the shell know to exit the moment encountered with an error.
+expr -- evaluate mathematic expression . expr 2 + 2 gives the value 4.
+expr 2 + 2 --addition
+expr 10 / 2 -- division
+expr 2 \* 4 --- multipication
+expr 4 - 2 ---subtraction.
+expr \( 2 + 2 \) \* 4 -- grouping to set order of precedence and escaping the brackets using \.
+
+
+env -- gives the list of all the global variables
+set -- gives the list of local variable to shell. 
+escape sequence -- \ (back slash)
+/dev/null redirects the command standard output to the null device, which is a special device which discards the information written to it.
+read "variable name " --- reads the interactive input and stores it in the variable.
+echo ${master=prabin} -- sets value to the variable and dispalys at the same time in the command line 
+declare -i NEWVAR=10 --explicitly defines NEWVAR as an integer.
+declare -r VAR="this is a string" --- explicity defines the varibale as read only.
+
+**There is a distinction in Linux between shell variables, and environment variables. In Linux, shell variables are only in the current shell, and Environment variables, are in that shell and all child shells. 
+shell variables are set with e.g. just a=5
+environment variables are set with export, export also sets the shell variable**
+
+**Files and directories whose names begin with a dot (.) by default are not displayed in directory listings by the standard command ls. Therefore, they are traditionally used to store settings, preferences, etc..There are also two special directory names in this class: the directory named simply . is an alias for the same directory in which it appears (a self reference), and the directory named .. refers to the parent directory of **
+
+**Best practice make your variables caps and put the values in double quotes and no space between variable and value**
+
+**Enclosing characters in single quotes (') preserves the literal value of each character within the quotes.**
+**Enclosing characters in double quotes (") preserves the literal value of all characters within the quotes, with the exception of $, `, \, and, when history expansion is enabled, !**
+
+
+
+
+#Array
+#############################
+Array elements are space seperated 
+MYARRAY=("first" "second" "third") --- array 
+echo ${MYARRAY[0]} --- dispaly an array value indexed at first posiiton. 
+echo ${MYARRAY[*]} --- displays  everything out in thte array.
+MYARRAY[3]="Fourth" -- appends the array with the new value indexed in the number mentioned.
+
+**code snippet array iteration***
+  ARRAY=("web1" "web2" "web3")
+  for INDEX in ${ARRAY[@]} ; do
+  	echo "the server is $INDEX "
+  done
+
+**code snippet array iteration using count***
+
+  NEWARRAY=("prema" "benny" "bittu" "bikku")
+  COUNT=0
+  for INDEX in ${NEWARRAY[@]}; do
+  	echo " The name is ${NEWARRAY[$COUNT]}"
+  	#COUNT="$COUNT + 1" --- works as well.
+  	COUNT=`expr $COUNT + 1`
+  done
+
+#Passing varibale to script at the command line 
+#####################################################
+** code snippet for passing varibales**
+USERNAME=$1
+PASSWORD=$2
+
+echo "The user name is $USERNAME and password is $PASSWORD"
+
+**
+
+variales passed in from the command line from the first and second position delimited by space will be stored in $1 and $2 respectively.
+
+#The if statement
+######################################################
+**code snippet guess number 
+echo "Enter a number between 1 and 5"
+read NUMBER 
+
+if [ $NUMBER -eq 3 ] ; then
+	echo "You have guessed the correct number : $NUMBER"
+fi 
+
+**
+
+**cide snippet for fileexiistance and readable check
+
+FILENAME=$1
+
+if [ -f $FILENAME ] && [ -r $FILENAME ] ; then
+  echo " the file $FILENAME exist and is readable "
+fi 
+
+**
+
+*** code snippets for nested if ***
+echo "Guess a number between 1 and 3"
+read NUMBER
+
+if [ $NUMBER -eq 1 ] 2>/dev/null; then
+  echo "You have entered #1"
+elif [ $NUMBER -eq 2 ] 2>/dev/null; then
+  echo "You have entered #2"
+elif [ $NUMBER -eq 3 ] 2>/dev/null; then
+  echo "You have entered #3"
+else
+  echo "You havent followed the directions"
+fi 
+
+**
+
+** 2>/dev/null -- dumps the error to the blackhole.
+
+#Forloop
+###################################################
+
+** code snippet for iterating through a listing and cating the output to a file
+LISTING=`ls *.sh`
+for ITEMS in $LISTING ; do
+  echo $ITEMS
+  `cat $ITEMS >> /home/bernard/Scripts/dump.txt`
+done
+
+#while loop
+
+**code snippet for display the number of times hello world.
+COUNT=1
+
+echo "Enter the dispaly number"
+read DISPLAYNUMBER
+while [ $COUNT -le $DISPLAYNUMBER ] ; do
+  echo "Hello World : $COUNT"
+  COUNT="`expr $COUNT + 1`"
+done
+
+#Execution Operator
+#################################################
+2>/dev/null -- dumps the error to the blackhole.
+rm master.txt 2> /dev/null && echo "File exist and was removed" || echo "File doesnt exist and cant be removed" --- the 'and' is executed only when the remove command is true else 'or' is executed
+
+** code snippet demonstrating execution operators.
+echo "Enter a number between 1 and 5"
+read NUMBER 
+
+if [ $NUMBER -eq 1 ] || [ $NUMBER -eq 3 ] || [ $NUMBER -eq 5 ] 2> /dev/null ; then
+  echo "You have entered an OOD NUMBER "
+elif [ $NUMBER -lt 3 ] && [ $NUMBER -gt 1 ] 2> /dev/null ; then
+    echo "You have entered my favourite number"
+fi 
+
+
