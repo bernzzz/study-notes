@@ -164,4 +164,46 @@ elif [ $NUMBER -lt 3 ] && [ $NUMBER -gt 1 ] 2> /dev/null ; then
     echo "You have entered my favourite number"
 fi 
 
+#Reading files
+################################# 
+**code snippet for reading file using while
 
+
+FILENAME=$1
+
+while read -r line ; do
+
+  echo " Names : $line"
+done < "$FILENAME"
+
+
+**code snippet to reading file using for 
+
+FILENAME=`cat list`
+
+
+for ITEM in $FILENAME ;do 
+  echo "Name : $ITEM"
+done
+
+
+ #File descriptors
+ ##################################
+ 
+ ** code snippet for reading and writing using file descriptors
+
+ FILENAMEREAD=$1
+FILENAMEWRITE=$2
+
+exec 5<$FILENAMEREAD
+
+exec 6>$FILENAMEWRITE
+
+while read -r LINE ; do
+  if [[ $LINE =~ bittu ]] ; then
+    echo "i love $LINE " >&6 
+  fi 
+done <&5
+
+exec 5>&-
+exec 6>&-
