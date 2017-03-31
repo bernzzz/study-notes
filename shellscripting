@@ -192,7 +192,7 @@ done
  
  ** code snippet for reading and writing using file descriptors
 
- FILENAMEREAD=$1
+FILENAMEREAD=$1
 FILENAMEWRITE=$2
 
 exec 5<$FILENAMEREAD
@@ -207,3 +207,113 @@ done <&5
 
 exec 5>&-
 exec 6>&-
+
+#IFS and Delimiting
+IFS -- internal field seperator ---
+
+** code snippet using IFS
+
+FILENAME=$1
+IFS=' '
+
+while read -r processor memory cpu company; do
+        echo "processor : $processor"
+        echo "memory : $memory"
+        echo "cpu : $cpu"
+        echo "company : $company"
+
+
+done < $FILENAME
+
+# trap and signals
+##########################
+trap is a command which helps us to look for the occurance of something likes of events , signals
+
+
+** code snippet for reading and writing using file descriptors
+
+trap 'echo " - Please press Q to exit"' SIGINT SIGTERM SIGTSTP
+while [ "$CHOICE" != "Q" ] && [ "$CHOICE" != "q" ] ; do
+
+  echo "MAIN MENU"
+  echo "---------"
+  echo "1)DEV"
+  echo "2)TEST"
+  echo "3)UAT"
+  echo "4)PROD"
+  echo "Q)EXIT"
+  echo "--------"
+  echo "Enter your Choice:"
+  read CHOICE
+
+  clear
+done
+
+#Debugging 
+#############################
+set -x --start debug
+set +x --stop debug
+
+
+#Error Handling
+#################
+#!/bin/bash
+cd master 2> /dev/null
+
+if [ $? = 0 ] ; then
+
+  ls -al
+
+else
+
+  echo "Directory doesnt exist"
+fi 
+
+#Simple functions
+####################
+Funcions are way of grouping like commands to a single referable name
+: -- null command
+
+fucntion () {
+
+  echo "Hello World"
+}
+
+fucntion
+
+#Function return and exit
+
+** code snippet to show funciton return and exit.
+YES=0
+NO=1
+FIRST=$1
+SECOND=$2
+THIRD=$3
+
+function complex () {
+
+  if [ ! -z  "$THIRD" ] ; then
+
+    return "$YES"
+
+  else
+    
+    return "$NO"
+  fi 
+
+}
+
+complex 
+RETURN_VAL=$?
+
+echo "$RETURN_VAL"
+
+if [ $RETURN_VAL -eq 0 ] ; then
+
+  echo "We received all the parameters"
+else 
+  echo "Usage: complexfucntion.sh [param1] [param2] [param3]"
+
+fi
+
+
